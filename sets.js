@@ -1,4 +1,4 @@
-import { displayText } from './displayFunctions'
+import { displayText } from './displayFunctions.js'
 
 const main = () => 
 {

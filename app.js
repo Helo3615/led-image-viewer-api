@@ -1,5 +1,5 @@
-import { displayText } from './displayFunctions'
-import { main } from './sets'
+import { displayText } from './displayFunctions.js'
+import { main } from './sets.js'
 import Express from 'express'
 
 const PORT = 3000
