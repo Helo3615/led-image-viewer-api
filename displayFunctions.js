@@ -4,7 +4,7 @@ const rpiRgbLedMatrixPath = '../rpi-rgb-led-matrix'
 const ledRowsCount = 16
 const textScrollerPath = '/utils/text-scroller'
 const fontPath = rpiRgbLedMatrixPath + '/fonts/9x18.bdf'
-const PATH = __dirname
+const PATH = process.cwd()
 
 const commandPending = null
 
@@ -14,42 +14,37 @@ const executeCommand = command =>
 
 	if (!PATH) console.error('Path must be defined')
 
-	commandPending = spawn(command, [], { env: { path: PATH } })
-
 	var scriptOutput = ""
-
-    commandPending.stdout.setEncoding('utf8')
-    commandPending.stderr.setEncoding('utf8')
-
-    commandPending.stdout.on('data', function(data) 
-    {
-        console.log('stdout: ' + data)
-
-        data = data.toString()
-        scriptOutput += data
-    })
-
-    commandPending.stderr.on('data', function(data) 
-    {
-        console.log('stderr: ' + data)
-
-        data = data.toString()
-        scriptOutput += data
-    })
 
     const promise = new Promise((resolve, reject) => 
     {
-    	commandPending.on('close', function(code) 
-	    {
-	    	console.success('Command closed : ', code)
-	    	resolve({ scriptOutput: scriptOutput, code: code })
-	    })
+    	commandPending = spawn(command, [], { env: { path: PATH } })
+    		.on('close', function(code) 
+		    {
+		    	console.success('Command closed : ', code)
+		    	resolve({ scriptOutput: scriptOutput, code: code })
+		    })
+    		.on('error', function(error) 
+		    {
+		    	console.error('Command error : ', error)
+		    	reject({ scriptOutput: scriptOutput, code: error })
+		    })
+		    .stdout.setEncoding('utf8')
+		    .stdout.on('data', function(data) 
+		    {
+		        console.log('stdout: ' + data)
 
-	    commandPending.on('error', function(error) 
-	    {
-	    	console.error('Command error : ', error)
-	    	reject({ scriptOutput: scriptOutput, code: error })
-	    })
+		        data = data.toString()
+		        scriptOutput += data
+		    })
+		    .stderr.setEncoding('utf8')
+		    .stderr.on('data', function(data) 
+		    {
+		        console.log('stderr: ' + data)
+
+		        data = data.toString()
+		        scriptOutput += data
+		    })
     }) 
 
 	return promise()
