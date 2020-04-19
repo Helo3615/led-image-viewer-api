@@ -6,8 +6,9 @@ const fontPath = rpiRgbLedMatrixPath + '/fonts/9x18.bdf'
 const timeoutPromise = (ms, promise) => 
 {
   const timeout = new Promise((resolve, reject) => {
-    const id = setTimeout(() => {
-      clearTimeout(id);
+    const id = setTimeout(() => 
+    {
+      clearTimeout(id)
       reject('Timed out in '+ ms + 'ms.')
     }, ms)
   })
@@ -18,7 +19,7 @@ const timeoutPromise = (ms, promise) =>
   ])
 }
 
-const executeCommand = async (command) => 
+const executeCommand = command => 
 {
 	const commandExecuted = new Promise((resolve, reject) => {
 		exec(command, (err, stdout, stderr) => 
@@ -29,9 +30,9 @@ const executeCommand = async (command) =>
 		})
 	})
 
-	const result = await timeoutPromise(5000, commandExecuted) 
-
-	return { command: command, result: result }
+	return timeoutPromise(5000, commandExecuted)
+		.then(res => ({ command: command, status: 'success', result: res }))
+		.catch(err => ({ command: command, status: 'error', result: err }))
 }
 
 // int loopCount | -1 for endless
