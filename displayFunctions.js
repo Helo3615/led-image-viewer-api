@@ -4,13 +4,14 @@ const rpiRgbLedMatrixPath = '../rpi-rgb-led-matrix'
 const ledRowsCount = 16
 const textScrollerPath = '/utils/text-scroller'
 const fontPath = rpiRgbLedMatrixPath + '/fonts/9x18.bdf'
-const PATH = process.cwd()
+const PATH = process.cwd() + '/'
 
 const commandPending = null
 
-const executeCommand = command => 
+const executeCommand = (command, args) => 
 {
 	console.log('Will execute command :', command)
+	console.log('With args :', args)
 
 	if (!PATH) console.error('Path must be defined')
 
@@ -18,7 +19,7 @@ const executeCommand = command =>
 
     const promise = new Promise((resolve, reject) => 
     {
-    	commandPending = spawn(command, [], { env: { path: PATH } })
+    	commandPending = spawn(command, args, { env: { path: PATH } })
     		.on('close', function(code) 
 		    {
 		    	console.log('Command closed : ', code)
@@ -47,12 +48,10 @@ const executeCommand = command =>
 		    })
     }) 
 
-	return promise()
+	return promise
 		.then(res => ({ command: command, status: 'success', result: res }))
 		.catch(err => ({ command: command, status: 'error', result: err }))
 }
-
-const makeCommandPrefix = commandFilePath => `${rpiRgbLedMatrixPath}${commandFilePath} --led-rows=${ledRowsCount}`
 
 // int loopCount | -1 for endless
 // int speed | 0 for no scrolling
@@ -68,9 +67,10 @@ const displayText = (
 	reset()
 
 	const color = `${r},${g},${b}`
-	const command = `${makeCommandPrefix(textScrollerPath)} -f ${fontPath} -s ${speed} -l ${loopCount} -C ${color} "${text}"`
+	const command = `${rpiRgbLedMatrixPath}${commandFilePath}`
+	const args = [ `--led-rows=${ledRowsCount}`, '-f', fontPath, '-s', speed, '-l', loopCount, '-C', color, `"${text}"` ]
 
-	return executeCommand(command)
+	return executeCommand(command, args)
 }
 
 const displayImage = () =>  

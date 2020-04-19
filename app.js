@@ -13,11 +13,11 @@ app.listen(PORT, HOSTNAME, () => {
 
 // routes
 app.get('/launch/set/main', (req, res) => 
-	main().then(result = res.send(result)).catch(err => res.send(err)))
+	main().then(result => res.send(result)).catch(err => res.send(err)))
 
 app.get('/launch/text/:text/:r/:g/:b/:speed', (req, res) => 
 	displayText(req.params.text, req.params.speed || 2, req.params.r || 255, req.params.g || 255, req.params.b || 255)
-		.then(result = res.send(result)).catch(err => res.send(err)))
+		.then(result => res.send(result)).catch(err => res.send(err)))
 
 app.get('/reset', (req, res) => res.send(reset()))
 
