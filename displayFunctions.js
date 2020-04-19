@@ -21,7 +21,7 @@ const executeCommand = command =>
     	commandPending = spawn(command, [], { env: { path: PATH } })
     		.on('close', function(code) 
 		    {
-		    	console.success('Command closed : ', code)
+		    	console.log('Command closed : ', code)
 		    	resolve({ scriptOutput: scriptOutput, code: code })
 		    })
     		.on('error', function(error) 
@@ -29,16 +29,16 @@ const executeCommand = command =>
 		    	console.error('Command error : ', error)
 		    	reject({ scriptOutput: scriptOutput, code: error })
 		    })
-		    .stdout.setEncoding('utf8')
-		    .stdout.on('data', function(data) 
+		commandPending.stdout.setEncoding('utf8')
+		commandPending.stdout.on('data', function(data) 
 		    {
 		        console.log('stdout: ' + data)
 
 		        data = data.toString()
 		        scriptOutput += data
 		    })
-		    .stderr.setEncoding('utf8')
-		    .stderr.on('data', function(data) 
+		commandPending.stderr.setEncoding('utf8')
+		commandPending.stderr.on('data', function(data) 
 		    {
 		        console.log('stderr: ' + data)
 
