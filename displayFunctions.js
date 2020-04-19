@@ -1,7 +1,7 @@
+import { exec } from 'child_process'
+
 const fontPath = '../fonts/9x18.bdf'
 const rpiRgbLedMatrixPath = '../rpi-rgb-led-matrix'
-
-const { exec } = require('child_process')
 
 const handleCommandResponse = (err, stdout, stderr) => 
 {
