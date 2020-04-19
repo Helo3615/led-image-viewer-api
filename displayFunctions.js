@@ -19,7 +19,7 @@ const executeCommand = (command, args) =>
 
     const promise = new Promise((resolve, reject) => 
     {
-    	commandPending = spawn(command, args, { env: { path: PATH, detached: true } })
+    	commandPending = spawn(command, args, { env: { path: PATH } })
     		.on('close', function(code) 
 		    {
 		    	console.log('Command closed : ', code)
