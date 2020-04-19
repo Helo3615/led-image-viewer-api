@@ -1,0 +1,24 @@
+{
+  "name": "led-image-viewer-api",
+  "version": "1.0.0",
+  "description": "Control led display with http route",
+  "main": "app.js",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TuxxyDOS/led-image-viewer-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TuxxyDOS/led-image-viewer-api/issues"
+  },
+  "homepage": "https://github.com/TuxxyDOS/led-image-viewer-api#readme"
+}
