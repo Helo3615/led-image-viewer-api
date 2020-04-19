@@ -4,12 +4,17 @@ const rpiRgbLedMatrixPath = '../rpi-rgb-led-matrix'
 const ledRowsCount = 16
 const textScrollerPath = '/utils/text-scroller'
 const fontPath = rpiRgbLedMatrixPath + '/fonts/9x18.bdf'
+const PATH = __dirname
 
 const commandPending = null
 
 const executeCommand = command => 
 {
-	commandPending = spawn(command)
+	console.log('Will execute command :', command)
+
+	if (!PATH) console.error('Path must be defined')
+
+	commandPending = spawn(command, [], { env: { path: PATH } })
 
 	var scriptOutput = ""
 
@@ -32,10 +37,18 @@ const executeCommand = command =>
         scriptOutput += data
     })
 
-    const promise = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => 
+    {
     	commandPending.on('close', function(code) 
 	    {
+	    	console.success('Command closed : ', code)
 	    	resolve({ scriptOutput: scriptOutput, code: code })
+	    })
+
+	    commandPending.on('error', function(error) 
+	    {
+	    	console.error('Command error : ', error)
+	    	reject({ scriptOutput: scriptOutput, code: error })
 	    })
     }) 
 
