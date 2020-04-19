@@ -19,7 +19,7 @@ const executeCommand = (command, args) =>
 
     const promise = new Promise((resolve, reject) => 
     {
-    	commandPending = spawn(command, args, { env: { path: PATH } })
+    	commandPending = spawn(command, args, { env: { path: PATH, detached: true } })
     		.on('close', function(code) 
 		    {
 		    	console.log('Command closed : ', code)
@@ -30,6 +30,21 @@ const executeCommand = (command, args) =>
 		    	console.error('Command error : ', error)
 		    	reject({ scriptOutput: scriptOutput, code: error })
 		    })
+    		.on('exit', function(data) 
+		    {
+		    	console.error('Command exited : ', data)
+		    	reject({ scriptOutput: scriptOutput, code: data })
+		    })
+		    .on('disconnect', function(data) 
+		    {
+		    	console.error('Command disconnected : ', data)
+		    	reject({ scriptOutput: scriptOutput, code: data })
+		    })
+    		.on('message', function(data) 
+		    {
+		    	console.error('Command message : ', data)
+		    })
+
 		commandPending.stdout.setEncoding('utf8')
 		commandPending.stdout.on('data', function(data) 
 		    {
@@ -68,7 +83,7 @@ const displayText = (
 
 	const color = `${r},${g},${b}`
 	const command = `${rpiRgbLedMatrixPath}${textScrollerPath}`
-	const args = [ `--led-rows=${ledRowsCount}`, '-f', fontPath, '-s', speed, '-l', loopCount, '-C', color, `"${text}"` ]
+	const args = [ `--led-rows=${ledRowsCount}`, '-f', fontPath, '-s', speed, '-l', loopCount, '-C', color, `${text}` ]
 
 	return executeCommand(command, args)
 }
