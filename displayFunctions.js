@@ -1,6 +1,7 @@
 import { exec } from 'child_process'
 
 const rpiRgbLedMatrixPath = '../rpi-rgb-led-matrix'
+const ledRowsCount = 16
 const fontPath = rpiRgbLedMatrixPath + '/fonts/9x18.bdf'
 
 const timeoutPromise = (ms, promise) => 
@@ -35,27 +36,29 @@ const executeCommand = command =>
 		.catch(err => ({ command: command, status: 'error', result: err }))
 }
 
+const makeCommandPrefix = commandFilePath => `${rpiRgbLedMatrixPath}${commandFilePath} --led-rows=${ledRowsCount}`
+
 // int loopCount | -1 for endless
 // int speed | 0 for no scrolling
 const displayText = (
 		text = 'undefined', 
-		speed = 0, 
+		speed = 1, 
 		loopCount = -1, 
 		r = 255, 
 		g = 255, 
 		b = 255
 	) =>  
 {
-	const commandPrefix = rpiRgbLedMatrixPath + '/utils/text-scroller'
+	const commandFilePath = '/utils/text-scroller'
 	const color = `${r},${g},${b}`
-	const command = `${commandPrefix} -f ${fontPath} -s ${speed} -l ${loopCount} -C ${color} "${text}"`
+	const command = `${makeCommandPrefix(commandFilePath)} -f ${fontPath} -s ${speed} -l ${loopCount} -C ${color} "${text}"`
 
 	return executeCommand(command)
 }
 
 const displayImage = () =>  
 {
-	const commandPrefix = '../led-image-viewer --led-rows=16 '
+	const commandFilePath = '../led-image-viewer'
 
 }
 
