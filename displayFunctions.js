@@ -1,38 +1,45 @@
-import { exec } from 'child_process'
+import { exec, spawn } from 'child_process'
 
 const rpiRgbLedMatrixPath = '../rpi-rgb-led-matrix'
 const ledRowsCount = 16
 const textScrollerPath = '/utils/text-scroller'
 const fontPath = rpiRgbLedMatrixPath + '/fonts/9x18.bdf'
 
-const timeoutPromise = (ms, promise) => 
-{
-  const timeout = new Promise((resolve, reject) => {
-    const id = setTimeout(() => 
-    {
-      clearTimeout(id)
-      reject('Timed out in '+ ms + 'ms.')
-    }, ms)
-  })
-
-  return Promise.race([
-    promise,
-    timeout
-  ])
-}
+const commandPending = null
 
 const executeCommand = command => 
 {
-	const commandExecuted = new Promise((resolve, reject) => {
-		exec(command, (err, stdout, stderr) => 
-		{
-			if (err) reject(err)
+	commandPending = spawn(command)
 
-			resolve(stdout ? stdout : stderr)
-		})
-	})
+	var scriptOutput = ""
 
-	return timeoutPromise(5000, commandExecuted)
+    commandPending.stdout.setEncoding('utf8')
+    commandPending.stderr.setEncoding('utf8')
+
+    commandPending.stdout.on('data', function(data) 
+    {
+        console.log('stdout: ' + data)
+
+        data = data.toString()
+        scriptOutput += data
+    })
+
+    commandPending.stderr.on('data', function(data) 
+    {
+        console.log('stderr: ' + data)
+
+        data = data.toString()
+        scriptOutput += data
+    })
+
+    const promise = new Promise((resolve, reject) => {
+    	commandPending.on('close', function(code) 
+	    {
+	    	resolve({ scriptOutput: scriptOutput, code: code })
+	    })
+    }) 
+
+	return promise()
 		.then(res => ({ command: command, status: 'success', result: res }))
 		.catch(err => ({ command: command, status: 'error', result: err }))
 }
@@ -50,6 +57,8 @@ const displayText = (
 		loopCount = -1
 	) =>  
 {
+	reset()
+
 	const color = `${r},${g},${b}`
 	const command = `${makeCommandPrefix(textScrollerPath)} -f ${fontPath} -s ${speed} -l ${loopCount} -C ${color} "${text}"`
 
@@ -62,11 +71,14 @@ const displayImage = () =>
 
 }
 
-const turnOff = () => 
+const reset = () => 
 { 
-	const command = `${makeCommandPrefix(textScrollerPath)} -f ${fontPath} -s 0 -l -1 -C 0,0,0 " "`
+	if (!commandPending)
+		return 'No command pending'
 
-	return executeCommand(command)
+	commandPending.kill()
+
+	return 'Done'
 }
 
-export { displayText, displayImage, turnOff }
+export { displayText, displayImage, reset }

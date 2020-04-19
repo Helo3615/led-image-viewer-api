@@ -1,4 +1,4 @@
-import { displayText, turnOff } from './displayFunctions.js'
+import { displayText, reset } from './displayFunctions.js'
 import { main } from './sets.js'
 import Express from 'express'
 
@@ -15,10 +15,10 @@ app.listen(PORT, HOSTNAME, () => {
 app.get('/launch/set/main', async (req, res) => res.send(await main()))
 app.get('/launch/text/:text/:r/:g/:b/:speed', async (req, res) => 
 	res.send(await main(req.params.text, req.params.speed || 2, req.params.r || 255, req.params.g || 255, req.params.b || 255)))
-app.get('/turn_off', async (req, res) => res.send(await turnOff()))
+app.get('/reset', (req, res) => res.send(reset())
 
 app.get('/', (req, res) => res.send({
 	routes: [
-		'/launch/set/main', '/turn_off', '/launch/text/:text/:r/:g/:b/:speed'
+		'/launch/set/main', '/reset', '/launch/text/:text/:r/:g/:b/:speed'
 	]
 }))
