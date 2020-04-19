@@ -67,7 +67,7 @@ const displayText = (
 	reset()
 
 	const color = `${r},${g},${b}`
-	const command = `${rpiRgbLedMatrixPath}${commandFilePath}`
+	const command = `${rpiRgbLedMatrixPath}${textScrollerPath}`
 	const args = [ `--led-rows=${ledRowsCount}`, '-f', fontPath, '-s', speed, '-l', loopCount, '-C', color, `"${text}"` ]
 
 	return executeCommand(command, args)
