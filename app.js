@@ -12,7 +12,7 @@ app.listen(PORT, HOSTNAME, () => {
 })
 
 // routes
-app.get('/launch/set/main', (req, res) => main())
+app.get('/launch/set/main', async (req, res) => res.send(await main())
 
 app.get('*', (req, res) => {  throw new Error('Wrong route') })
 

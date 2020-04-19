@@ -3,14 +3,35 @@ import { exec } from 'child_process'
 const rpiRgbLedMatrixPath = '../rpi-rgb-led-matrix'
 const fontPath = rpiRgbLedMatrixPath + '/fonts/9x18.bdf'
 
-const handleCommandResponse = (err, stdout, stderr) => 
+const timeoutPromise = (ms, promise) => 
 {
-	if (err) console.error(err)
-	else {
-	   // the *entire* stdout and stderr (buffered)
-	   console.log(`stdout: ${stdout}`)
-	   console.log(`stderr: ${stderr}`)
-	}
+  const timeout = new Promise((resolve, reject) => {
+    const id = setTimeout(() => {
+      clearTimeout(id);
+      reject('Timed out in '+ ms + 'ms.')
+    }, ms)
+  })
+
+  return Promise.race([
+    promise,
+    timeout
+  ])
+}
+
+const executeCommand = async (command) => 
+{
+	const commandExecuted = new Promise((resolve, reject) => {
+		exec(command, (err, stdout, stderr) => 
+		{
+			if (err) reject(err)
+
+			resolve(stdout ? stdout : stderr)
+		})
+	})
+
+	const result = await timeoutPromise(5000, commandExecuted) 
+
+	return { command: command, result: result }
 }
 
 // int loopCount | -1 for endless
@@ -28,7 +49,7 @@ const displayText = (
 	const color = `${r},${g},${b}`
 	const command = `${commandPrefix} -f ${fontPath} -s ${speed} -l ${loopCount} -C ${color} "${text}"`
 
-	exec(command,  handleCommandResponse)
+	return executeCommand(command)
 }
 
 const displayImage = () =>  
