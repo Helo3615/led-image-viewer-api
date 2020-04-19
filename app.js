@@ -8,7 +8,7 @@ const HOSTNAME = '127.0.0.1'
 const app = Express()
 
 app.listen(PORT, HOSTNAME, () => {
-  console.log(`Server running at http://${hostname}:${port}/`)
+  console.log(`Server running at http://${HOSTNAME}:${PORT}/`)
 })
 
 // routes
