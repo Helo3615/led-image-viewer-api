@@ -1,0 +1,12 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea/.gitignore
+.idea/inspectionProfiles/
+.idea/led-image-viewer-api.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+node_modules/
+package-lock.json
+./.env
+.env
+!/.env

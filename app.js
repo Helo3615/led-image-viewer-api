@@ -1,9 +1,12 @@
 import { displayText, reset } from './displayFunctions.js'
 import { main } from './sets.js'
 import Express from 'express'
+import dotenv from 'dotenv'
 
-const PORT = 3000
-const HOSTNAME = '192.168.0.41'
+dotenv.config()
+
+const PORT = process.env.PORT
+const HOSTNAME = process.env.HOSTNAME
 
 const app = Express()
 

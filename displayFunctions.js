@@ -15,7 +15,7 @@ const executeCommand = (command, args) =>
 
 	if (!PATH) console.error('Path must be defined')
 
-	var scriptOutput = ""
+	let scriptOutput = ""
 
     const promise = new Promise((resolve, reject) => 
     {
@@ -76,7 +76,7 @@ const displayText = (
 		r = 255, 
 		g = 255, 
 		b = 255,
-		loopCount = -1
+		loopCount = 1
 	) =>  
 {
 	reset()
@@ -88,10 +88,10 @@ const displayText = (
 	return executeCommand(command, args)
 }
 
+// TODO
 const displayImage = () =>  
 {
 	const commandFilePath = '../led-image-viewer'
-
 }
 
 const reset = () => 
