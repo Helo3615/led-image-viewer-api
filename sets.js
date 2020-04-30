@@ -3,7 +3,7 @@ import { stocks, cryptos } from './ownedAssets.js'
 import * as Colors from './colors.js'
 import { getCryptos, getStocks } from './middlewares/financeApi.js'
 import { getCurrent } from './middlewares/weatherApi.js'
-import { isIncreases, getEarnings } from './utils'
+import { isIncreases, getEarnings } from './utils.js'
 
 const main = async () =>
 {
